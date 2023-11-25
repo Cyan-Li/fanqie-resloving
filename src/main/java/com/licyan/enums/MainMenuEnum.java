@@ -2,10 +2,10 @@ package com.licyan.enums;
 
 public enum MainMenuEnum {
 
-    FIRST(1,"单本解析"),
-    SECOND(2,"批量解析"),
-    THIRD(3,"更新指定小说"),
-    FOURTH(4,"批量更新小说"),
+    FIRST(1,"单本解析 当前版本：如已存在，会重新下载"),
+    SECOND(2,"批量解析 当前版本：如已存在，会重新下载"),
+    THIRD(3,"更新指定小说 暂无功能，敬请期待"),
+    FOURTH(4,"批量更新小说 暂无功能，敬请期待"),
     END(5,"退出");
 
 

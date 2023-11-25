@@ -1,66 +1,66 @@
 package com.licyan.utils;
 
 import com.licyan.enums.HttpEnum;
+import com.licyan.exception.MyConnectException;
+import com.licyan.pojo.HttpHeader;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.*;
+import java.net.*;
+import java.util.Map;
 
-import com.licyan.exception.ConnectException;
-import com.licyan.pojo.HttpHeader;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
+/**
+ * Http工具类
+ */
 public class HttpUtils {
 
     /**
      * get请求
-     * @param url
-     * @param header
+     * @param url 请求地址
+     * @param httpHeader 请求头
      * @return
-     * @throws IOException
      */
-    public HttpURLConnection getMethod(String url, HttpHeader header) throws IOException, ConnectException {
-        URL con = new URL(url);
-        HttpURLConnection connection = (HttpURLConnection) con.openConnection();
-        connection.setRequestMethod("GET");
-        extracted(header, connection);
+    public HttpURLConnection get(String url, HttpHeader httpHeader) throws MyConnectException, ProtocolException {
 
-        //初始化状态码
-        int responseCode;
-
-        try{
-            responseCode = connection.getResponseCode();
-        }catch (Exception e){
-            throw new ConnectException("连接网络异常: " + e.getMessage());
+        URL requestUrl = null;
+        try {
+            requestUrl = new URL(url);
+        } catch (MalformedURLException e) {
+            throw new MyConnectException("请求地址不合法");
+        }
+        HttpURLConnection urlConnection;
+        try {
+            urlConnection = (HttpURLConnection) requestUrl.openConnection();
+        } catch (IOException e) {
+            throw new MyConnectException("网络异常");
         }
 
-        if (HttpEnum.SUCCESS.getCode() == responseCode) {
-            return connection;
-        } else {
-            log.error("请求失败，状态码为：{}", responseCode);
-            throw new RuntimeException("请求失败");
-        }
-    }
-
-    /**
-     * 组装请求头
-     * @param header
-     * @param connection
-     */
-    private void extracted(HttpHeader header, HttpURLConnection connection) {
-        if (null != header.getConnectTimeout()) {
-            connection.setConnectTimeout(header.getConnectTimeout());
-        }
-        if (null != header.getReadTimeout()) {
-            connection.setReadTimeout(header.getReadTimeout());
-        }
-        Map<String, String> headerMap = header.getHeaderMap();
-        if(null != headerMap && !headerMap.isEmpty()){
-            for (Map.Entry<String, String> stringStringEntry : header.getHeaderMap().entrySet()) {
-                connection.setRequestProperty(stringStringEntry.getKey(),stringStringEntry.getValue());
+        //设置请求头
+        if(null != httpHeader){
+            urlConnection.setConnectTimeout(httpHeader.getConnectTimeout());
+            urlConnection.setReadTimeout(httpHeader.getReadTimeout());
+            if(null != httpHeader.getHeaderMap()){
+                for (Map.Entry<String, String> stringStringEntry : httpHeader.getHeaderMap().entrySet()) {
+                    urlConnection.setRequestProperty(stringStringEntry.getKey(),stringStringEntry.getValue());
+                }
             }
         }
+
+        urlConnection.setRequestMethod("GET");
+
+        int responseCode = 0;
+        try {
+            responseCode = urlConnection.getResponseCode();
+        } catch (IOException e) {
+            throw new MyConnectException("连接失败");
+        }
+
+        if(HttpEnum.SUCCESS.getCode() == responseCode){
+            //请求成功
+            return urlConnection;
+        }else {
+            throw new MyConnectException("请求失败");
+        }
+
     }
+
 }
