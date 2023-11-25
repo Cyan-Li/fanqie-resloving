@@ -1,6 +1,6 @@
 package com.licyan.enums;
 
-public enum HttpEnums {
+public enum HttpEnum {
 
     SUCCESS(200,"请求成功"),
     ;
@@ -9,12 +9,12 @@ public enum HttpEnums {
 
     private String Message;
 
-    HttpEnums(Integer code, String message) {
+    HttpEnum(Integer code, String message) {
         this.code = code;
         Message = message;
     }
 
-    HttpEnums() {
+    HttpEnum() {
     }
 
     public Integer getCode() {

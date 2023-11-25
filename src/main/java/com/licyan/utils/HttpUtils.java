@@ -1,23 +1,15 @@
 package com.licyan.utils;
 
-import com.licyan.enums.HttpEnums;
+import com.licyan.enums.HttpEnum;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.*;
 
-import com.licyan.pojo.Chapter;
+import com.licyan.exception.ConnectException;
 import com.licyan.pojo.HttpHeader;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 @Slf4j
 public class HttpUtils {
@@ -29,13 +21,22 @@ public class HttpUtils {
      * @return
      * @throws IOException
      */
-    public HttpURLConnection getMethod(String url, HttpHeader header) throws IOException {
+    public HttpURLConnection getMethod(String url, HttpHeader header) throws IOException, ConnectException {
         URL con = new URL(url);
         HttpURLConnection connection = (HttpURLConnection) con.openConnection();
         connection.setRequestMethod("GET");
         extracted(header, connection);
-        int responseCode = connection.getResponseCode();
-        if (HttpEnums.SUCCESS.getCode() == responseCode) {
+
+        //初始化状态码
+        int responseCode;
+
+        try{
+            responseCode = connection.getResponseCode();
+        }catch (Exception e){
+            throw new ConnectException("连接网络异常: " + e.getMessage());
+        }
+
+        if (HttpEnum.SUCCESS.getCode() == responseCode) {
             return connection;
         } else {
             log.error("请求失败，状态码为：{}", responseCode);

@@ -67,6 +67,12 @@ public class FanqieResloving {
                         break;
                     }
                 }
+            }else if(i == MainMenuEnum.SECOND.getCode()){
+                System.out.println("批量解析功能暂未开放，敬请期待");
+            }else if(i == MainMenuEnum.THIRD.getCode()){
+                System.out.println("更新小说功能暂未开放，敬请期待");
+            }else if(i == MainMenuEnum.FOURTH.getCode()){
+                System.out.println("批量更新小说功能暂未开放，敬请期待");
             } else if (i == MainMenuEnum.END.getCode()) {
                 System.out.println("感谢您的使用，再见");
                 // 暂停一秒
