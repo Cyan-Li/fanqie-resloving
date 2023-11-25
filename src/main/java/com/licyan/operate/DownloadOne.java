@@ -107,6 +107,16 @@ public class DownloadOne {
 
         // 使用正则表达式匹配最后一个 "/" 和第一个 "?" 之间的内容
         Pattern pattern = Pattern.compile("/(.*?)(?=\\?)");
+
+        // 检查 URL 中是否包含问号
+        if (url.contains("?")) {
+            // 如果有问号，匹配最后一个“/”和第一个“？”之间的内容
+            pattern = Pattern.compile("/([^/]*)\\?");
+        } else {
+            // 如果没有问号，匹配最后一个“/”之后的所有内容
+            pattern = Pattern.compile("/([^/]*)$");
+        }
+
         Matcher matcher = pattern.matcher(url);
 
         // 查找匹配结果

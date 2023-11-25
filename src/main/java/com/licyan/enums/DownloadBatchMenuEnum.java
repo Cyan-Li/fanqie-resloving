@@ -1,24 +1,20 @@
 package com.licyan.enums;
 
-public enum MainMenuEnum {
+public enum DownloadBatchMenuEnum {
 
-    FIRST(1,"单本解析"),
-    SECOND(2,"批量解析"),
-    THIRD(3,"更新指定小说"),
-    FOURTH(4,"批量更新小说"),
-    END(5,"退出");
-
+    FIRST(1,"继续批量解析"),
+    END(2,"返回上一级");
 
     private Integer code;
 
     private String operate;
 
-    MainMenuEnum(Integer code, String operate) {
+    DownloadBatchMenuEnum(Integer code, String operate) {
         this.code = code;
         this.operate = operate;
     }
 
-    MainMenuEnum() {
+    DownloadBatchMenuEnum() {
     }
 
     public Integer getCode() {
@@ -28,4 +24,6 @@ public enum MainMenuEnum {
     public String getOperate() {
         return operate;
     }
+
+
 }

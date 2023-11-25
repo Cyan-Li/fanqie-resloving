@@ -2,6 +2,7 @@ package com.licyan;
 
 import com.licyan.enums.DownloadOneMenuEnum;
 import com.licyan.enums.MainMenuEnum;
+import com.licyan.operate.DownloadBatch;
 import com.licyan.operate.DownloadOne;
 
 import java.util.Scanner;
@@ -12,12 +13,15 @@ public class FanqieResloving {
         Scanner scanner = new Scanner(System.in);
 
         // 程序启动
-        System.out.println("番茄小说解析启动成功");
-        System.out.println("请选择要进行的操作");
+        System.out.println("****** 番茄小说下载小工具启动成功 ******");
+        System.out.println("请选择要进行的操作，输入序号即可");
 
         while (true) {
             // 主菜单
             System.out.println(MainMenuEnum.FIRST.getCode() + "." + MainMenuEnum.FIRST.getOperate());
+            System.out.println(MainMenuEnum.SECOND.getCode() + "." + MainMenuEnum.SECOND.getOperate());
+            System.out.println(MainMenuEnum.THIRD.getCode() + "." + MainMenuEnum.THIRD.getOperate());
+            System.out.println(MainMenuEnum.FOURTH.getCode() + "." + MainMenuEnum.FOURTH.getOperate());
             System.out.println(MainMenuEnum.END.getCode() + "." + MainMenuEnum.END.getOperate());
 
             System.out.println("请选择操作的序号");
@@ -68,7 +72,11 @@ public class FanqieResloving {
                     }
                 }
             }else if(i == MainMenuEnum.SECOND.getCode()){
-                System.out.println("批量解析功能暂未开放，敬请期待");
+
+                // System.out.println("批量解析功能暂未开放，敬请期待");
+                DownloadBatch downloadBatch = new DownloadBatch();
+                downloadBatch.downloadBatch();
+
             }else if(i == MainMenuEnum.THIRD.getCode()){
                 System.out.println("更新小说功能暂未开放，敬请期待");
             }else if(i == MainMenuEnum.FOURTH.getCode()){
