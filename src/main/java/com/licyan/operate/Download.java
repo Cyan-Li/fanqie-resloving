@@ -98,72 +98,154 @@ public class Download {
      *
      * @return
      */
-    public String getChapterContent(int index,
-                                    int maxSize,
-                                    // String title,
-                                    // HttpURLConnection httpURLConnection,
-                                    String novelId,
-                                    ChapterInfo chapterInfo) throws MyIOException {
+    // public String getChapterContent(int index,
+    //                                 int maxSize,
+    //                                 // String title,
+    //                                 // HttpURLConnection httpURLConnection,
+    //                                 String novelId,
+    //                                 ChapterInfo chapterInfo) throws MyIOException {
+    //
+    //     int retryCount = 0;
+    //     boolean isSuccess = false;
+    //
+    //     String result = "";
+    //
+    //     while (retryCount < 3 && !isSuccess) {
+    //
+    //         HttpURLConnection httpURLConnection = null;
+    //
+    //         String device_platform = "android";
+    //         String parent_enterfrom = "novel_channel_search.tab.";
+    //         String aid = "2329";
+    //         String platform_id = "1";
+    //
+    //         String url = chapterDownloadApi
+    //                 + "?device_platform=" + device_platform
+    //                 + "&parent_enterfrom=" + parent_enterfrom
+    //                 + "&aid=" + aid
+    //                 + "&platform_id=" + platform_id
+    //                 + "&group_id=" + novelId
+    //                 + "&item_id=" + chapterInfo.getChapterId();
+    //
+    //         // 发起请求
+    //         HttpUtils httpUtils = new HttpUtils();
+    //         HttpHeader httpHeader = new HttpHeader();
+    //         Map<String, String> stringStringMap = new HashMap<>();
+    //         stringStringMap.put("User-Agent", "user_agent");
+    //         httpHeader.setHeaderMap(stringStringMap);
+    //
+    //         // HttpURLConnection httpURLConnection = null;
+    //         try {
+    //             httpURLConnection = httpUtils.get(url, httpHeader);
+    //         } catch (MyConnectException e) {
+    //             System.out.println("获取失败，失败原因为：" + e.getMessage());
+    //         } catch (ProtocolException e) {
+    //             System.out.println("获取失败");
+    //         }
+    //
+    //         // String result = "";
+    //
+    //         Document document = null;
+    //         try {
+    //             document = Jsoup.parse(httpURLConnection.getInputStream(), "UTF-8", url);
+    //
+    //
+    //             // 获取章节内容
+    //             // 定义正则表达式模式
+    //             String patternString = "<article>([\\s\\S]*?)</article>";
+    //             Pattern pattern = Pattern.compile(patternString);
+    //             Matcher matcher = pattern.matcher(document.toString());
+    //
+    //             if (matcher.find()) {
+    //                 String chapterText = matcher.group(1);
+    //                 chapterText = chapterText.replace("<p>", "  ").replace("</p>", "\n");
+    //                 result = result + chapterInfo.getTitle() + "\n" + chapterText + "\n" + "\n" + "\n";
+    //                 System.out.print("获取成功：" + chapterInfo.getTitle() + "               ");
+    //                 System.out.println("下载进度：" + index + "/" + maxSize);
+    //                 // System.out.println("正常章节内容：" + document.toString());
+    //             } else {
+    //                 System.out.println("不正常章节内容：" + document.toString());
+    //                 System.out.println("问题章节：" + index);
+    //
+    //                 // throw new RuntimeException("解析章节内容失败");
+    //             }
+    //
+    //         } catch (IOException e) {
+    //             throw new MyIOException("文件解析异常");
+    //         }
+    //     }
+    //
+    //     return result;
+    //
+    // }
 
 
-        String device_platform = "android";
-        String parent_enterfrom = "novel_channel_search.tab.";
-        String aid = "2329";
-        String platform_id = "1";
+    public String getChapterContent(int index, int maxSize, String novelId, ChapterInfo chapterInfo) throws MyIOException {
+        String result = "";
+        int retryCount = 0;
+        boolean isSuccess = false;
 
-        String url = chapterDownloadApi
-                + "?device_platform=" + device_platform
-                + "&parent_enterfrom=" + parent_enterfrom
-                + "&aid=" + aid
-                + "&platform_id=" + platform_id
-                + "&group_id=" + novelId
-                + "&item_id=" + chapterInfo.getChapterId();
+        while (retryCount < 3 && !isSuccess) {
+            HttpURLConnection httpURLConnection = null;
+            try {
+                String device_platform = "android";
+                String parent_enterfrom = "novel_channel_search.tab.";
+                String aid = "2329";
+                String platform_id = "1";
 
-        // 发起请求
-        HttpUtils httpUtils = new HttpUtils();
-        HttpHeader httpHeader = new HttpHeader();
-        Map<String, String> stringStringMap = new HashMap<>();
-        stringStringMap.put("User-Agent", "user_agent");
-        httpHeader.setHeaderMap(stringStringMap);
+                String url = chapterDownloadApi
+                        + "?device_platform=" + device_platform
+                        + "&parent_enterfrom=" + parent_enterfrom
+                        + "&aid=" + aid
+                        + "&platform_id=" + platform_id
+                        + "&group_id=" + novelId
+                        + "&item_id=" + chapterInfo.getChapterId();
 
-        HttpURLConnection httpURLConnection = null;
-        try {
-            httpURLConnection = httpUtils.get(url, httpHeader);
-        } catch (MyConnectException e) {
-            System.out.println("获取失败，失败原因为：" + e.getMessage());
-        } catch (ProtocolException e) {
-            System.out.println("获取失败");
+                HttpUtils httpUtils = new HttpUtils();
+                HttpHeader httpHeader = new HttpHeader();
+                Map<String, String> stringStringMap = new HashMap<>();
+                stringStringMap.put("User-Agent", "user_agent");
+                httpHeader.setHeaderMap(stringStringMap);
+
+                try {
+                    httpURLConnection = httpUtils.get(url, httpHeader);
+                } catch (MyConnectException e) {
+                    throw new RuntimeException(e);
+                }
+
+                Document document = Jsoup.parse(httpURLConnection.getInputStream(), "UTF-8", url);
+
+                String patternString = "<article>([\\s\\S]*?)</article>";
+                Pattern pattern = Pattern.compile(patternString);
+                Matcher matcher = pattern.matcher(document.toString());
+
+                if (matcher.find()) {
+                    String chapterText = matcher.group(1);
+                    chapterText = chapterText.replace("<p>", "  ").replace("</p>", "\n");
+                    result = result + chapterInfo.getTitle() + "\n" + chapterText + "\n" + "\n" + "\n";
+                    System.out.print("获取成功：" + chapterInfo.getTitle() + "               ");
+                    System.out.println("下载进度：" + index + "/" + maxSize);
+                    isSuccess = true;
+                } else {
+                    // System.out.println("不正常章节内容：" + document.toString());
+                    System.out.println("问题章节：" + index);
+                }
+            } catch (IOException e) {
+                System.out.println("获取失败，失败原因为：" + e.getMessage());
+                retryCount++;
+                if (retryCount < 3) {
+                    System.out.println("正在重试第 " + (retryCount + 1) + " 次...");
+                }
+            }
         }
 
-        String result = "";
-
-        Document document = null;
-        try {
-            document = Jsoup.parse(httpURLConnection.getInputStream(), "UTF-8", url);
-
-
-            // 获取章节内容
-            // 定义正则表达式模式
-            String patternString = "<article>([\\s\\S]*?)</article>";
-            Pattern pattern = Pattern.compile(patternString);
-            Matcher matcher = pattern.matcher(document.toString());
-            if (matcher.find()) {
-                String chapterText = matcher.group(1);
-                chapterText = chapterText.replace("<p>", "  ").replace("</p>", "\n");
-                result = result + chapterInfo.getTitle() + "\n" + chapterText + "\n" + "\n" + "\n";
-                System.out.print("获取成功：" + chapterInfo.getTitle() + "               ");
-                System.out.println("下载进度：" + index + "/" + maxSize);
-            } else {
-                throw new RuntimeException("解析章节内容失败");
-            }
-
-        } catch (IOException e) {
-            throw new MyIOException("文件解析异常");
+        if (!isSuccess) {
+            System.out.println("重试三次仍然失败，跳过当前章节");
         }
 
         return result;
-
     }
+
 
 
     /**
@@ -281,7 +363,7 @@ public class Download {
                 throw new MyIOException("文件创建失败……");
             }
         }
-
+        System.out.println("文件地址为：" + file.getPath());
         System.out.println("如已操作完成，请输入1开始下载");
         while (true) {
 
